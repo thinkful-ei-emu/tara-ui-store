@@ -17,15 +17,14 @@ const STORE = {
 };
 
 function generateItemElement(item) {
+  console.log('generating shopping item');
   return `
     <li data-item-id="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
-        <form id="edit-item-form">
-          <label for="edit-item-entry">Edit this item</label>
-          <input type="text" name="edit-item-entry" class = "js-edit-item-entry">
-          <button type="submit">Edit item</button>
-        </form>
+        <button class = 'shopping-item-edit js-item-edit'>
+          <span class="button-label">edit</span>
+        </button>
         <button class="shopping-item-toggle js-item-toggle">
             <span class="button-label">check</span>
         </button>
@@ -46,7 +45,7 @@ function generateShoppingItemsString(shoppingList) {
   console.log('Generating shopping list element');
 
   const items = shoppingList.map((item) => generateItemElement(item));
-  
+
   return items.join('');
 }
 
@@ -77,7 +76,7 @@ function addItemToShoppingList(itemName) {
 function handleNewItemSubmit() {
   $('#js-shopping-list-form').submit(function(event) {
     event.preventDefault();
-    console.log('`handleNewItemSubmit` ran');
+    console.log('handling new submiot');
     const newItemName = $('.js-shopping-list-entry').val();
     $('.js-shopping-list-entry').val('');
     addItemToShoppingList(newItemName);
@@ -92,6 +91,7 @@ function toggleCheckedForListItem(itemId) {
 }
 
 function getItemIdFromElement(item) {
+  console.log('grtting id for element');
   return $(item)
     .closest('li')
     .data('item-id');
@@ -99,7 +99,7 @@ function getItemIdFromElement(item) {
 
 function handleItemCheckClicked() {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
-    console.log('`handleItemCheckClicked` ran');
+    console.log('handling checking item');
     const id = getItemIdFromElement(event.currentTarget);
     toggleCheckedForListItem(id);
     renderShoppingList();
@@ -108,7 +108,7 @@ function handleItemCheckClicked() {
 
 function handleDeleteItemClicked() {
   $('.js-shopping-list').on('click', '.js-item-delete', function(event) {
-    console.log('`handleDeleteItemClicked` ran');
+    console.log('`handling item delete');
     //access item to be deleted
     const id = getItemIdFromElement(event.currentTarget);
     deleteItem(id);
@@ -120,6 +120,7 @@ function handleDeleteItemClicked() {
 
 //deletes item passed in from STORE.items 
 function deleteItem(idNum){
+  console.log('deleting item')
   for (let i = 0; i < STORE.items.length; i++){
     if (STORE.items[i].id === idNum){
       STORE.items.splice(i, 1);
@@ -129,12 +130,13 @@ function deleteItem(idNum){
 
 //Toggles the STORE.hideChecked property
 function toggleHideFilter() {
+  console.log('toggling hide filter')
   STORE.hideChecked = !STORE.hideChecked;
 }
   
 function handleToggleHideFilter() {
   $('.js-hide-completed-toggle').on('click', () => {
-    console.log('hide clicked!');
+    console.log('handling checked filter');
     toggleHideFilter();
     renderShoppingList();
   });
@@ -146,6 +148,7 @@ function handleToggleHideFilter() {
 
 function handleSearch() {
   $('#js-shopping-list-search').submit(function(event) {
+    console.log('handling a search');
     event.preventDefault();
     const searchCrit = $('.js-search-entry').val();
     $('.js-search-entry').val('');
@@ -155,12 +158,13 @@ function handleSearch() {
 }
 
 function itemSearch(crit) {
+  console.log('searching for an item');
   STORE.search = crit;
 }
 
 function handleClearSearch() {
   $('#js-shopping-list-search').on('click', '.js-clear', function() {
-    console.log('clear the search!!!');
+    console.log('clearing the search');
     event.preventDefault();
     clearSearch();
     renderShoppingList();
@@ -172,21 +176,21 @@ function clearSearch() {
 }
 
 function handleItemEdit(){
-$('#edit-item-form').submit(function(event) {
-  event.preventDefault();
-  const newName = $('.js-edit-item-entry').val();
-  console.log(newName);
-  $('.js-edit-item-entry').val('');
-  const id = getItemIdFromElement(event.currentTarget);
-  console.log(id);
-  itemEdit(id, newName);
-  renderShoppingList();
-//call itemEdit with form input
-//render shoppingList()
+  $('.js-shopping-list').on('click', '.js-item-edit', function(event) {
+    event.preventDefault();
+    const newName = prompt("Please enter new item", "e.g. fuji apples");
+    console.log(newName);
+    const id = getItemIdFromElement(event.currentTarget);
+    console.log(id);
+    itemEdit(id, newName);
+    renderShoppingList();
+  //call itemEdit with form input
+  //render shoppingList()
 });
 }
 
 function itemEdit(itemID, newName) {
+  console.log('editing an item');
   for (let i = 0; i < STORE.items.length; i++){
     if (STORE.items[i].id === itemID){
       STORE.items[i].name = newName;
@@ -198,6 +202,7 @@ function itemEdit(itemID, newName) {
 // that handle new item submission and user clicks on the "check" and "delete" buttons
 // for individual shopping list items.
 function handleShoppingList() {
+  console.log('handling the shopping list');
   renderShoppingList();
   handleNewItemSubmit();
   handleItemCheckClicked();
