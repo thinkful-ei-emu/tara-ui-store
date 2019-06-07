@@ -21,9 +21,11 @@ function generateItemElement(item) {
     <li data-item-id="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
-        <button class='shopping-item-edit js-item-edit'>
-            <span class = 'button-label'>edit</span>
-        </button>
+        <form id="edit-item-form">
+          <label for="edit-item-entry">Edit this item</label>
+          <input type="text" name="edit-item-entry" class = "js-edit-item-entry">
+          <button type="submit">Edit item</button>
+        </form>
         <button class="shopping-item-toggle js-item-toggle">
             <span class="button-label">check</span>
         </button>
@@ -33,6 +35,12 @@ function generateItemElement(item) {
       </div>
     </li>`;
 }
+
+{/* <form id="js-shopping-list-form">
+<label for="shopping-list-entry">Add an item</label>
+<input type="text" name="shopping-list-entry" class="js-shopping-list-entry" placeholder="e.g., broccoli">
+<button type="submit">Add item</button>
+</form> */}
 
 function generateShoppingItemsString(shoppingList) {
   console.log('Generating shopping list element');
@@ -49,6 +57,7 @@ function renderShoppingList() {
   if (STORE.hideChecked) {
     filteredItems = filteredItems.filter(item => !item.checked);
   }
+  console.log(Boolean(STORE.search));
   if (STORE.search) {
     filteredItems = filteredItems.filter(function(item) {
       return item.name.includes(STORE.search);
@@ -161,6 +170,29 @@ function handleClearSearch() {
 function clearSearch() {
   STORE.search = undefined;
 }
+
+function handleItemEdit(){
+$('#edit-item-form').submit(function(event) {
+  event.preventDefault();
+  const newName = $('.js-edit-item-entry').val();
+  console.log(newName);
+  $('.js-edit-item-entry').val('');
+  const id = getItemIdFromElement(event.currentTarget);
+  console.log(id);
+  itemEdit(id, newName);
+  renderShoppingList();
+//call itemEdit with form input
+//render shoppingList()
+});
+}
+
+function itemEdit(itemID, newName) {
+  for (let i = 0; i < STORE.items.length; i++){
+    if (STORE.items[i].id === itemID){
+      STORE.items[i].name = newName;
+    }
+  }
+}
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -173,6 +205,7 @@ function handleShoppingList() {
   handleToggleHideFilter();
   handleSearch();
   handleClearSearch();
+  handleItemEdit();
 }
 
 // when the page loads, call `handleShoppingList`
