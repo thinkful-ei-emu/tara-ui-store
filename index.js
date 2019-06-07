@@ -12,7 +12,8 @@ const STORE = {
     {id: cuid(), name: 'apples', checked: false},
     {id: cuid(), name: 'oranges', checked: false}
   ],
-  hideChecked: false
+  hideChecked: false,
+  search: false
 };
 
 function generateItemElement(item) {
@@ -20,6 +21,9 @@ function generateItemElement(item) {
     <li data-item-id="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
+        <button class='shopping-item-edit js-item-edit'>
+            <span class = 'button-label'>edit</span>
+        </button>
         <button class="shopping-item-toggle js-item-toggle">
             <span class="button-label">check</span>
         </button>
@@ -109,6 +113,19 @@ function deleteItem(idNum){
   }
 }
 
+//Toggles the STORE.hideChecked property
+function toggleHideFilter() {
+  STORE.hideChecked = !STORE.hideChecked;
+}
+  
+function handleToggleHideFilter() {
+  $('.js-hide-completed-toggle').on('click', () => {
+    console.log('hide clicked!');
+    toggleHideFilter();
+    renderShoppingList();
+  });
+}
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -118,18 +135,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-}
-
-//Toggles the STORE.hideChecked property
-function toggleHideFilter() {
-  STORE.hideChecked = !STORE.hideChecked;
-}
-
-function handleToggleHideFulter() {
-  $('.js-hide-compledted-toggle').on('click', () => {
-    toggleHideFilter();
-    renderShoppingList();
-  });
+  handleToggleHideFilter();
 }
 
 // when the page loads, call `handleShoppingList`
